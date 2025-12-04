@@ -6,6 +6,7 @@ import org.example.schoolmanagementsystem.DTO.AddressDTO;
 import org.example.schoolmanagementsystem.Model.Address;
 import org.example.schoolmanagementsystem.Model.Teacher;
 import org.example.schoolmanagementsystem.Repository.AddressRepository;
+import org.example.schoolmanagementsystem.Repository.TeacherRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AddressService
 {
-    private final AddressRepository repository;
+    private final AddressRepository AddressRepository;
+    private final TeacherRepository TeacherRepository;
 
     public List<Address> getAll(){
-        List<Address> list = repository.findAll();
+        List<Address> list = AddressRepository.findAll();
         if (list.isEmpty()){
             throw new ApiException("address not found");
         }
@@ -25,7 +27,7 @@ public class AddressService
     }
 
     public void addAddress(AddressDTO addressDTO){
-        Teacher t = repository.findTeacherById(addressDTO.getTeacher_id());
+        Teacher t = TeacherRepository.findTeacherById(addressDTO.getTeacher_id());
         if (t == null){
             throw new ApiException("teacher not found");
         }
@@ -34,31 +36,31 @@ public class AddressService
         address.setStreet(addressDTO.getStreet());
         address.setBuilding_number(addressDTO.getBuilding_number());
         address.setArea(addressDTO.getArea());
-        repository.save(address);
+        AddressRepository.save(address);
     }
 
     public void updateAddress(AddressDTO addressDTO){
-        Teacher t = repository.findTeacherById(addressDTO.getTeacher_id());
+        Teacher t = TeacherRepository.findTeacherById(addressDTO.getTeacher_id());
         if (t == null){
             throw new ApiException("teacher not found");
         }else {
             if (t.getAddress() == null){
                 throw new ApiException("address not found");
             }else {
-                Address a = repository.findAddressByid(t.getAddress().getId());
+                Address a = AddressRepository.findAddressByid(t.getAddress().getId());
                 a.setStreet(addressDTO.getStreet());
                 a.setBuilding_number(addressDTO.getBuilding_number());
                 a.setArea(addressDTO.getArea());
-                repository.save(a);
+                AddressRepository.save(a);
             }
         }
     }
 
     public void deleteAddress(Integer id){
-        Address a = repository.findAddressByid(id);
+        Address a = AddressRepository.findAddressByid(id);
         if (a == null){
             throw new ApiException("address not found");
         }
-        repository.delete(a);
+        AddressRepository.delete(a);
     }
 }

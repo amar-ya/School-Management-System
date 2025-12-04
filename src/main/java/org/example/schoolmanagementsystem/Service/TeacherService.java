@@ -2,6 +2,7 @@ package org.example.schoolmanagementsystem.Service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.schoolmanagementsystem.Api.ApiException;
+import org.example.schoolmanagementsystem.DTO.TeacherDTO;
 import org.example.schoolmanagementsystem.Model.Teacher;
 import org.example.schoolmanagementsystem.Repository.TeacherRepository;
 import org.springframework.stereotype.Service;
@@ -12,22 +13,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TeacherService
 {
-    private final TeacherRepository repository;
+    private final TeacherRepository TeacherRepository;
 
-    public void addTeacher(Teacher teacher){
-        repository.save(teacher);
+    public void addTeacher(TeacherDTO teacher){
+        Teacher t = new Teacher();
+        t.setEmail(teacher.getEmail());
+        t.setSalary(teacher.getSalary());
+        t.setAddress(teacher.getAddress());
+        t.setAge(teacher.getAge());
+        t.setName(teacher.getName());
+        TeacherRepository.save(t);
     }
 
     public List<Teacher> getAllTeachers(){
-        List<Teacher> t = repository.findAll();
+        List<Teacher> t = TeacherRepository.findAll();
         if (t.isEmpty()){
             throw new ApiException("no teachers found");
         }
         return t;
     }
 
-    public void updateTeacher(Integer id,Teacher teacher){
-        Teacher t = repository.findTeacherById(id);
+    public void updateTeacher(Integer id,TeacherDTO teacher){
+        Teacher t = TeacherRepository.findTeacherById(id);
         if (t == null){
             throw new ApiException("teacher not found");
         }else {
@@ -36,20 +43,20 @@ public class TeacherService
             t.setEmail(teacher.getEmail());
             t.setName(teacher.getName());
             t.setSalary(teacher.getSalary());
-            repository.save(t);
+            TeacherRepository.save(t);
         }
     }
 
     public void deleteTeacher(Integer id){
-        Teacher t = repository.findTeacherById(id);
+        Teacher t = TeacherRepository.findTeacherById(id);
         if (t == null){
             throw new ApiException("teacher not found");
         }
-        repository.delete(t);
+        TeacherRepository.delete(t);
     }
 
     public Teacher findTeacherById(Integer id){
-        Teacher t = repository.findTeacherById(id);
+        Teacher t = TeacherRepository.findTeacherById(id);
         if (t == null){
             throw new ApiException("teacher not found");
         }
