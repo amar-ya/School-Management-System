@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.schoolmanagementsystem.Api.ApiException;
 import org.example.schoolmanagementsystem.DTO.TeacherNameDTO;
 import org.example.schoolmanagementsystem.Model.Course;
+import org.example.schoolmanagementsystem.Model.Student;
 import org.example.schoolmanagementsystem.Model.Teacher;
 import org.example.schoolmanagementsystem.Repository.CourseRepository;
+import org.example.schoolmanagementsystem.Repository.StudentRepository;
 import org.example.schoolmanagementsystem.Repository.TeacherRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ public class CourseService
 {
     private final CourseRepository courseRepository;
     private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
 
     public List<Course> getAll(){
         List<Course> list = courseRepository.findAll();
@@ -67,5 +70,40 @@ public class CourseService
         }
         TeacherNameDTO name = new TeacherNameDTO(c.getTeacher().getName());
         return name;
+    }
+
+    public void addStudentToCourse(Integer course_id, Integer student_id){
+        Course c = courseRepository.findCourseById(course_id);
+        Student s = studentRepository.findStudentById(student_id);
+        if (c == null){
+            throw new ApiException("course not found");
+        }
+        if (s == null){
+            throw new ApiException("student not found");
+        }
+        c.getStudents().add(s);
+        s.getCourses().add(c);
+        studentRepository.save(s);
+        courseRepository.save(c);
+    }
+
+    public String teacherOfCourse(Integer course_id){
+        Course c = courseRepository.findCourseById(course_id);
+        if (c == null){
+            throw new ApiException("course not found");
+        }
+        return teacherRepository.findTeachersNameById(course_id);
+    }
+
+    public List<Student> getStudentsOfCourse(Integer course_id){
+        Course c = courseRepository.findCourseById(course_id);
+        if (c == null){
+            throw new ApiException("course not found");
+        }
+        List<Student> s = studentRepository.findStudentsByCourseId(course_id);
+        if (s.isEmpty()){
+            throw new ApiException("no students found");
+        }
+        return s;
     }
 }

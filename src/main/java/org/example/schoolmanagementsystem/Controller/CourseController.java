@@ -45,6 +45,19 @@ public class CourseController
 
     @GetMapping("/get/teacher-name/course_id/{id}")
     public ResponseEntity<?> getTeacherNameCourseId(@PathVariable Integer id){
-        return ResponseEntity.status(200).body(courseService.getTeacherNameForCourse(id));
+        return ResponseEntity.status(200).body(new ApiResponse(courseService.teacherOfCourse(id)));
     }
+
+    @PutMapping("/add/course-student/{course_id}/{student_id}")
+    public ResponseEntity<?> addStudentToCourse(@PathVariable Integer course_id, @PathVariable Integer student_id){
+        courseService.addStudentToCourse(course_id, student_id);
+        return ResponseEntity.status(200).body(new ApiResponse("Student added successfully"));
+    }
+
+    @GetMapping("/get/students-course/{course_id}")
+    public ResponseEntity<?> getStudentsCourse(@PathVariable Integer course_id){
+        return ResponseEntity.status(200).body(courseService.getStudentsOfCourse(course_id));
+    }
+
+
 }
